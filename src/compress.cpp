@@ -44,14 +44,14 @@ public:
 
     std::string folder_path;
     this->get_parameter("csv_folder_path", folder_path);
-    csv_file_path_ = folder_path + "/compress_draco.csv"+ "_" + std::to_string(_encoding_speed) + "_" + std::to_string(_decoding_speed) + "_" + std::to_string(_quantization_bits);
+    csv_file_path_ = folder_path+ "/compress.csv";
 
     // saving data to a csv file
     if (!std::filesystem::exists(csv_file_path_)) {
       std::filesystem::create_directories(std::filesystem::path(csv_file_path_).parent_path()); 
       std::ofstream file(csv_file_path_);
       if (file.is_open()) {
-        file << "points_number, compresion_time, size_after_compresion[B], quantization_bits, encoding_speed, decoding_speed\n";  // Header row
+        file << "time,points_number,point_cloud_size,compresion_time,size_after_compresion,quantization_bits,encoding_speed,decoding_speed\n";  // Header row
         file.close();
       }
     }
@@ -130,7 +130,7 @@ private:
     int64_t t_nsec = msg->header.stamp.nanosec;
     double time = static_cast<double>(t_sec) + 1e-9 * static_cast<double>(t_nsec);
 
-    ofs << time << msg->row_step * msg->height << ", " << compression_time.count() << ", " << buffer.size() <<"," << _quantization_bits << _encoding_speed << _decoding_speed<<"\n";
+    ofs << time<<"," << msg->width * msg->height <<"," <<msg->row_step * msg->height << ", " << compression_time.count() << ", " << buffer.size() <<"," << _quantization_bits <<","<< _encoding_speed <<"," << _decoding_speed<<"\n";
     ofs.close();
 
   }

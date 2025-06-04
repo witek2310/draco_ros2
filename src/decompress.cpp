@@ -27,7 +27,7 @@ public:
       std::bind(&DracoDecompressorNode::compressed_callback, this, std::placeholders::_1));
 
     publisher_ = this->create_publisher<sensor_msgs::msg::PointCloud2>(
-      "/decompressed_pointcloud", 10);
+      "/decompressed_pointcloud_draco", 10);
 
 
     std::string folder_path;
@@ -39,7 +39,7 @@ public:
       std::filesystem::create_directories(std::filesystem::path(csv_file_path_).parent_path()); 
       std::ofstream file(csv_file_path_);
       if (file.is_open()) {
-        file << "time, points_number_after_decompression , decompresion_time, size_before_decompression\n";  // Header row
+        file << "time_stamp,points_number_after_decompression,decompresion_time,size_before_decompression\n";
         file.close();
       }
     }
@@ -125,7 +125,7 @@ private:
       RCLCPP_ERROR(this->get_logger(), "Could not open file: %s", csv_file_path_.c_str());
       return;
     }
-    ofs << time << output_msg.row_step * output_msg.height << "," << decompression_time.count() << "," << decompressed_size <<"\n";
+    ofs << time <<','<< output_msg.width * output_msg.height << "," << decompression_time.count() << "," << msg->data.size() <<"\n";
     ofs.close();
         
 
